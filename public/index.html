@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineTicket - Premium Movie Booking Experience</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-film"></i>
+                <span>CineTicket</span>
+            </div>
+            <div class="nav-links">
+                <a href="" class="nav-link active">
+                    <i class="fas fa-home"></i>
+                    Dashboard
+                </a>
+                <a href="" class="nav-link">
+                    <i class="fas fa-film"></i>
+                    Movie
+                </a>
+                <a href="" class="nav-link">
+                    <i class="fas fa-building"></i>
+                    Cinema
+                </a>
+                <a href="" class="nav-link">
+                    <i class="fas fa-ticket-alt"></i>
+                    Booking
+                </a>
+            </div>
+            <div class="user-menu">
+                <div class="user-icon">
+                    <i class="fas fa-user"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="app-content">
+        <div class="container">
+            <div class="summary-cards">
+                <div class="summary-card cinemas">
+                    <div class="summary-card-icon">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <div class="summary-card-content">
+                        <div class="summary-card-title">Total Cinemas</div>
+                        <div class="summary-card-value">-</div>
+                        <div class="summary-card-description">Available venues</div>
+                    </div>
+                </div>
+
+                <div class="summary-card movies">
+                    <div class="summary-card-icon">
+                        <i class="fas fa-film"></i>
+                    </div>
+                    <div class="summary-card-content">
+                        <div class="summary-card-title">Movie</div>
+                        <div class="summary-card-value">-</div>
+                        <div class="summary-card-description">Now showing</div>
+                    </div>
+                </div>
+
+                <div class="summary-card bookings">
+                    <div class="summary-card-icon">
+                        <i class="fas fa-ticket-alt"></i>
+                    </div>
+                    <div class="summary-card-content">
+                        <div class="summary-card-title">Bookings</div>
+                        <div class="summary-card-value">-</div>
+                        <div class="summary-card-description">Active bookings</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <div class="content-header">
+                    <h2 class="content-title">
+                        <i class="fas fa-film"></i> Content Management
+                    </h2>
+                    <button class="btn btn-primary" id="add-movie-btn">
+                        <i class="fas fa-plus"></i> Add Movie
+                    </button>
+                </div>
+                <div class="content-body">
+                    <div class="search-bar">
+                        <div class="search-input">
+                            <i class="fas fa-search"></i>
+                            <input type="text" placeholder="Search movies, cinemas or bookings...">
+                        </div>
+                        <div class="filter-dropdown">
+                            <button class="filter-btn">
+                                <i class="fas fa-filter"></i> Filter
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="tabs">
+                        <button class="tab-btn active" data-tab="movies">Movie</button>
+                        <button class="tab-btn" data-tab="cinemas">Cinema</button>
+                        <button class="tab-btn" data-tab="bookings">Booking</button>
+                        <button class="tab-btn" data-tab="users">Users</button>
+                        <button class="tab-btn" data-tab="reports">Reports</button>
+                    </div>
+
+                    <div class="tab-content active" id="movies-tab">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Poster</th>
+                                    <th>Title</th>
+                                    <th>Genre</th>
+                                    <th>Duration</th>
+                                    <th>Rating</th>
+                                    <th>Release Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="6">
+                                        <div class="loading-state">
+                                            <i class="fas fa-spinner fa-spin"></i>
+                                            <p>Loading movies...</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="tab-content" id="cinemas-tab">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>City</th>
+                                    <th>Address</th>
+                                    <th>Contact</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="5">
+                                        <div class="loading-state">
+                                            <i class="fas fa-spinner fa-spin"></i>
+                                            <p>Loading cinemas...</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="tab-content" id="bookings-tab">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Movie</th>
+                                    <th>Date & Time</th>
+                                    <th>Status</th>
+                                    <th>Promotion</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="6">
+                                        <div class="loading-state">
+                                            <i class="fas fa-spinner fa-spin"></i>
+                                            <p>Loading bookings...</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="tab-content" id="users-tab">
+                        <div class="empty-state">
+                            <i class="fas fa-users"></i>
+                            <h3>No users to display</h3>
+                            <p>Users management will be available in the next update</p>
+                            <button class="btn btn-primary">
+                                <i class="fas fa-bell"></i> Notify Me When Available
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="reports-tab">
+                        <div class="empty-state">
+                            <i class="fas fa-chart-bar"></i>
+                            <h3>Reports Coming Soon</h3>
+                            <p>Analytics and reporting features will be available in the next update</p>
+                            <button class="btn btn-primary">
+                                <i class="fas fa-bell"></i> Notify Me When Available
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="add-movie-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="fas fa-film"></i> Add New Movie
+                </h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="movie-form">
+                    <input type="hidden" id="movie-id">
+                    <div class="form-group">
+                        <label class="form-label">Movie Title</label>
+                        <input type="text" id="movie-title" class="form-control" placeholder="Enter movie title">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <textarea id="movie-description" class="form-control" placeholder="Enter movie description"></textarea>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Genre</label>
+                            <select id="movie-genre" class="form-control form-select" title="Select movie genre">
+                                <option value="">Select genre</option>
+                                <option value="action">Action</option>
+                                <option value="comedy">Comedy</option>
+                                <option value="drama">Drama</option>
+                                <option value="horror">Horror</option>
+                                <option value="sci-fi">Sci-Fi</option>
+                                <option value="romance">Romance</option>
+                                <option value="animation">Animation</option>
+                                <option value="mystery">Mystery</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Duration (minutes)</label>
+                            <input type="number" id="movie-duration" class="form-control" placeholder="Enter duration">
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Rating</label>
+                            <select id="movie-rating" class="form-control form-select" title="Select movie rating">
+                                <option value="">Select rating</option>
+                                <option value="G">G</option>
+                                <option value="PG">PG</option>
+                                <option value="PG-13">PG-13</option>
+                                <option value="R">R</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Release Date</label>
+                            <input type="date" id="movie-release-date" class="form-control" title="Select release date">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Movie Poster</label>
+                        <input type="file" id="movie-poster" class="form-control" title="Upload movie poster">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary">Cancel</button>
+                <button class="btn btn-primary" id="save-movie-btn">Save Movie</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification-container"></div>
+
+    <footer>
+        Created by: Ferdinand John Dobli &copy; 2025 All Rights Reserved
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
