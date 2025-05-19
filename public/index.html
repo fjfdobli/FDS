@@ -6,6 +6,11 @@
     <title>CineTicket - Premium Movie Booking Experience</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="seat-styles.css">
+    
+    <!-- PDF Generation Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
     <header>
@@ -80,11 +85,23 @@
             <div class="content-card">
                 <div class="content-header">
                     <h2 class="content-title">
-                        <i class="fas fa-film"></i> Content Management
+                        <i class="fas fa-film"></i> <span id="content-title-text">Content Management</span>
                     </h2>
-                    <button class="btn btn-primary" id="add-movie-btn">
-                        <i class="fas fa-plus"></i> Add Movie
-                    </button>
+                    <!-- The active add button will be shown based on the active tab -->
+                    <div class="action-buttons">
+                        <button class="btn btn-primary action-button active" id="add-movie-btn" data-tab="movies">
+                            <i class="fas fa-plus"></i> Add Movie
+                        </button>
+                        <button class="btn btn-primary action-button" id="add-cinema-btn" data-tab="cinemas">
+                            <i class="fas fa-plus"></i> Add Cinema
+                        </button>
+                        <button class="btn btn-primary action-button" id="add-booking-btn" data-tab="bookings">
+                            <i class="fas fa-plus"></i> Add Booking
+                        </button>
+                        <button class="btn btn-primary action-button" id="add-user-btn" data-tab="users">
+                            <i class="fas fa-plus"></i> Add User
+                        </button>
+                    </div>
                 </div>
                 <div class="content-body">
                     <div class="search-bar">
@@ -183,24 +200,90 @@
                     </div>
 
                     <div class="tab-content" id="users-tab">
-                        <div class="empty-state">
-                            <i class="fas fa-users"></i>
-                            <h3>No users to display</h3>
-                            <p>Users management will be available in the next update</p>
-                            <button class="btn btn-primary">
-                                <i class="fas fa-bell"></i> Notify Me When Available
-                            </button>
-                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Registration Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-table-body">
+                                <tr>
+                                    <td colspan="5">
+                                        <div class="loading-state">
+                                            <i class="fas fa-spinner fa-spin"></i>
+                                            <p>Loading users...</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
 
                     <div class="tab-content" id="reports-tab">
-                        <div class="empty-state">
-                            <i class="fas fa-chart-bar"></i>
-                            <h3>Reports Coming Soon</h3>
-                            <p>Analytics and reporting features will be available in the next update</p>
-                            <button class="btn btn-primary">
-                                <i class="fas fa-bell"></i> Notify Me When Available
-                            </button>
+                        <div class="reports-container">
+                            <div class="report-card">
+                                <div class="report-header">
+                                    <h3><i class="fas fa-ticket-alt"></i> Booking Statistics</h3>
+                                </div>
+                                <div class="report-body">
+                                    <div class="stat-item">
+                                        <span class="stat-label">Total Bookings</span>
+                                        <span class="stat-value" id="total-bookings">-</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Confirmed Bookings</span>
+                                        <span class="stat-value" id="confirmed-bookings">-</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Pending Bookings</span>
+                                        <span class="stat-value" id="pending-bookings">-</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="report-card">
+                                <div class="report-header">
+                                    <h3><i class="fas fa-film"></i> Movie Statistics</h3>
+                                </div>
+                                <div class="report-body">
+                                    <div class="stat-item">
+                                        <span class="stat-label">Total Movies</span>
+                                        <span class="stat-value" id="total-movies">-</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Most Popular Genre</span>
+                                        <span class="stat-value" id="popular-genre">-</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="report-card">
+                                <div class="report-header">
+                                    <h3><i class="fas fa-calendar-alt"></i> Date Range</h3>
+                                </div>
+                                <div class="report-body date-range-form">
+                                    <div class="form-group">
+                                        <label>Start Date</label>
+                                        <input type="date" id="report-start-date" class="form-control" title="Select start date for report" placeholder="YYYY-MM-DD">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>End Date</label>
+                                        <input type="date" id="report-end-date" class="form-control" title="Select end date for report" placeholder="YYYY-MM-DD">
+                                    </div>
+                                    <div class="report-actions">
+                                        <button class="btn btn-primary" id="generate-report-btn">
+                                            <i class="fas fa-sync"></i> Generate Report
+                                        </button>
+                                        <button class="btn btn-success" id="generate-report-pdf-btn">
+                                            <i class="fas fa-file-pdf"></i> Download PDF
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -278,10 +361,379 @@
 
     <div class="notification-container"></div>
 
+    <!-- Seat Selection Modal -->
+    <div class="modal-overlay" id="seat-selection-modal">
+        <div class="modal booking-flow-modal">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="fas fa-chair"></i> Select Your Seats
+                </h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="booking-steps">
+                    <div class="booking-step completed">
+                        <div class="step-number">1</div>
+                        <div class="step-title">Select Movie</div>
+                    </div>
+                    <div class="booking-step completed">
+                        <div class="step-number">2</div>
+                        <div class="step-title">Choose Showtime</div>
+                    </div>
+                    <div class="booking-step active">
+                        <div class="step-number">3</div>
+                        <div class="step-title">Select Seats</div>
+                    </div>
+                    <div class="booking-step">
+                        <div class="step-number">4</div>
+                        <div class="step-title">Checkout</div>
+                    </div>
+                </div>
+                
+                <div class="movie-details-banner">
+                    <div class="movie-poster-container">
+                        <img id="movie-poster-preview" src="" alt="Movie poster" class="movie-poster-lg">
+                    </div>
+                    <div class="movie-banner-details">
+                        <h2 class="movie-title-lg" id="movie-title-preview">Movie Title</h2>
+                        <div class="movie-meta">
+                            <div class="meta-item">
+                                <i class="fas fa-clock"></i>
+                                <span id="movie-duration-preview">120 min</span>
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-film"></i>
+                                <span id="movie-genre-preview">Action</span>
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-star"></i>
+                                <span id="movie-rating-preview">PG-13</span>
+                            </div>
+                        </div>
+                        <div class="showtime-details">
+                            <div class="showtime-title">Showtime</div>
+                            <div class="showtime-info">
+                                <div class="meta-item">
+                                    <i class="fas fa-calendar"></i>
+                                    <span id="showtime-date-preview">Jun 15, 2025</span>
+                                </div>
+                                <div class="meta-item">
+                                    <i class="fas fa-clock"></i>
+                                    <span id="showtime-time-preview">7:30 PM</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="seat-selection-container">
+                    <div class="theater-container">
+                        <div class="theater-wrapper">
+                            <div class="theater-screen"></div>
+                            <div class="seat-map" id="seat-map">
+                                <!-- Seat rows will be generated dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="seat-legend">
+                        <div class="legend-item">
+                            <div class="legend-icon regular"></div>
+                            <span>Regular</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-icon premium"></div>
+                            <span>Premium</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-icon vip"></div>
+                            <span>VIP</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-icon accessible"></div>
+                            <span>Accessible</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-icon selected"></div>
+                            <span>Selected</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-icon occupied"></div>
+                            <span>Occupied</span>
+                        </div>
+                    </div>
+                    
+                    <div class="seat-selection-summary">
+                        <div class="summary-header">
+                            <div class="summary-title">Selected Seats</div>
+                            <div class="seats-count">0 seats selected</div>
+                        </div>
+                        <div class="selected-seats-list" id="selected-seats-list">
+                            <!-- Selected seats will be listed here -->
+                            <div class="empty-selection">Please select your seats</div>
+                        </div>
+                        <div class="total-price">
+                            <span>Total:</span>
+                            <span id="total-price">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="back-to-showtimes-btn">Back</button>
+                <button class="btn btn-primary" id="proceed-to-checkout-btn" disabled>Proceed to Checkout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div class="modal-overlay" id="checkout-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="fas fa-shopping-cart"></i> Complete Your Booking
+                </h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="booking-steps">
+                    <div class="booking-step completed">
+                        <div class="step-number">1</div>
+                        <div class="step-title">Select Movie</div>
+                    </div>
+                    <div class="booking-step completed">
+                        <div class="step-number">2</div>
+                        <div class="step-title">Choose Showtime</div>
+                    </div>
+                    <div class="booking-step completed">
+                        <div class="step-number">3</div>
+                        <div class="step-title">Select Seats</div>
+                    </div>
+                    <div class="booking-step active">
+                        <div class="step-number">4</div>
+                        <div class="step-title">Checkout</div>
+                    </div>
+                </div>
+                
+                <form id="checkout-form">
+                    <div class="form-group">
+                        <label class="form-label">Choose User</label>
+                        <select id="checkout-user" class="form-control form-select" title="Select user for booking">
+                            <!-- Users will be populated dynamically -->
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Apply Promotion (Optional)</label>
+                        <select id="checkout-promotion" class="form-control form-select" title="Select promotion code">
+                            <option value="">No promotion</option>
+                            <!-- Promotions will be populated dynamically -->
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Payment Method</label>
+                        <select id="checkout-payment" class="form-control form-select" title="Select payment method">
+                            <option value="CREDIT_CARD">Credit Card</option>
+                            <option value="DEBIT_CARD">Debit Card</option>
+                            <option value="PAYPAL">PayPal</option>
+                            <option value="CASH">Cash at Counter</option>
+                        </select>
+                    </div>
+                    
+                    <div id="payment-details" class="payment-details">
+                        <div class="form-group credit-card-details">
+                            <label class="form-label">Card Number</label>
+                            <input type="text" id="card-number" class="form-control" placeholder="1234 5678 9012 3456" maxlength="19">
+                        </div>
+                        
+                        <div class="form-grid">
+                            <div class="form-group credit-card-details">
+                                <label class="form-label">Expiry Date</label>
+                                <input type="text" id="card-expiry" class="form-control" placeholder="MM/YY" maxlength="5">
+                            </div>
+                            <div class="form-group credit-card-details">
+                                <label class="form-label">CVV</label>
+                                <input type="text" id="card-cvv" class="form-control" placeholder="123" maxlength="3">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group credit-card-details">
+                            <label class="form-label">Name on Card</label>
+                            <input type="text" id="card-name" class="form-control" placeholder="John Doe">
+                        </div>
+                    </div>
+                    
+                    <div class="booking-summary">
+                        <h4>Booking Summary</h4>
+                        <div class="summary-item">
+                            <span>Movie:</span>
+                            <span id="summary-movie">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Showtime:</span>
+                            <span id="summary-showtime">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Seats:</span>
+                            <span id="summary-seats">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Subtotal:</span>
+                            <span id="summary-subtotal">-</span>
+                        </div>
+                        <div class="summary-item discount" id="discount-row" style="display: none;">
+                            <span>Discount:</span>
+                            <span id="summary-discount">-</span>
+                        </div>
+                        <div class="summary-item total">
+                            <span>Total:</span>
+                            <span id="summary-total">-</span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="back-to-seats-btn">Back</button>
+                <button class="btn btn-primary" id="complete-booking-btn">Complete Booking</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Showtime Selection Modal -->
+    <div class="modal-overlay" id="showtime-selection-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="fas fa-clock"></i> Select Showtime
+                </h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="movie-details-banner">
+                    <div class="movie-poster-container">
+                        <img id="showtime-movie-poster" src="" alt="Movie poster" class="movie-poster-lg">
+                    </div>
+                    <div class="movie-banner-details">
+                        <h2 class="movie-title-lg" id="showtime-movie-title">Movie Title</h2>
+                        <div class="movie-meta">
+                            <div class="meta-item">
+                                <i class="fas fa-clock"></i>
+                                <span id="showtime-movie-duration">120 min</span>
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-film"></i>
+                                <span id="showtime-movie-genre">Action</span>
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-star"></i>
+                                <span id="showtime-movie-rating">PG-13</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="showtime-selection">
+                    <h4>Available Showtimes</h4>
+                    <div class="showtimes-container" id="showtimes-container">
+                        <!-- Showtimes will be populated dynamically -->
+                        <div class="empty-state">
+                            <i class="fas fa-clock"></i>
+                            <h3>No showtimes available</h3>
+                            <p>There are no showtimes scheduled for this movie yet</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary showtime-modal-cancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Booking Confirmation Modal -->
+    <div class="modal-overlay" id="booking-confirmation-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="fas fa-check-circle"></i> Booking Confirmed
+                </h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="confirmation-content">
+                    <div class="confirmation-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h3>Thank You For Your Booking!</h3>
+                    <p>Your tickets have been booked successfully. You can find your booking details below.</p>
+                    
+                    <div class="ticket-container">
+                        <div class="ticket">
+                            <div class="ticket-header">
+                                <div class="ticket-logo">
+                                    <i class="fas fa-film"></i> CineTicket
+                                </div>
+                                <div class="ticket-id" id="confirmation-booking-id">Booking #12345</div>
+                            </div>
+                            <div class="ticket-content">
+                                <div class="ticket-movie" id="confirmation-movie">Inception</div>
+                                <div class="ticket-details">
+                                    <div class="ticket-detail">
+                                        <span class="ticket-label">Date & Time:</span>
+                                        <span class="ticket-value" id="confirmation-datetime">Jun 15, 2025 7:30 PM</span>
+                                    </div>
+                                    <div class="ticket-detail">
+                                        <span class="ticket-label">Cinema:</span>
+                                        <span class="ticket-value" id="confirmation-cinema">CineWorld</span>
+                                    </div>
+                                    <div class="ticket-detail">
+                                        <span class="ticket-label">Screen:</span>
+                                        <span class="ticket-value" id="confirmation-screen">Screen 1</span>
+                                    </div>
+                                    <div class="ticket-detail">
+                                        <span class="ticket-label">Seats:</span>
+                                        <span class="ticket-value" id="confirmation-seats">A1, A2</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ticket-footer">
+                                <div class="ticket-barcode">
+                                    <!-- Placeholder for barcode -->
+                                    <div class="barcode-placeholder"></div>
+                                    <div class="ticket-code" id="confirmation-code">TKT123456</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="confirmation-actions">
+                        <button class="btn btn-outline-primary" id="print-ticket-btn">
+                            <i class="fas fa-print"></i> Print Ticket
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="close-confirmation-btn">Done</button>
+            </div>
+        </div>
+    </div>
+
     <footer>
         Created by: Ferdinand John Dobli &copy; 2025 All Rights Reserved
     </footer>
 
     <script src="app.js"></script>
+    <script src="seat-selection.js"></script>
+    <script src="report-generator.js"></script>
+    <script>
+      // Initialize the seat selection module after everything is loaded
+      document.addEventListener('DOMContentLoaded', function() {
+        if (window.SeatSelection) {
+          window.SeatSelection.init();
+        }
+      });
+    </script>
 </body>
 </html>

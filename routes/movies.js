@@ -40,6 +40,92 @@ router.get('/:id', async (req, res) => {
   }
 })
 
+// Get showtimes for a specific movie
+router.get('/:id/showtimes', async (req, res) => {
+  try {
+    const movieId = req.params.id
+    
+    // Verify movie exists
+    const [movie] = await db.query('SELECT * FROM Movie WHERE movie_id = ?', [movieId])
+    if (movie.length === 0) {
+      return res.status(404).json({ message: 'Movie not found' })
+    }
+    
+    // Get all showtimes for the movie with screen, theater, and cinema information
+    const [showtimes] = await db.query(`
+      SELECT 
+        s.showtime_id, 
+        s.movie_id, 
+        s.screen_id, 
+        s.start_time, 
+        s.end_time, 
+        s.base_price, 
+        s.is_accessible,
+        scr.screen_name,
+        scr.screen_type,
+        th.theater_id,
+        th.theater_name,
+        th.theater_type,
+        c.cinema_id,
+        c.name as cinema_name,
+        c.city
+      FROM 
+        Showtime s
+      JOIN 
+        Screen scr ON s.screen_id = scr.screen_id
+      JOIN 
+        Theater th ON scr.theater_id = th.theater_id
+      JOIN 
+        Cinema c ON th.cinema_id = c.cinema_id
+      WHERE 
+        s.movie_id = ? AND s.start_time >= NOW()
+      ORDER BY 
+        s.start_time ASC
+    `, [movieId])
+    
+    // Get ticket inventory (available seats) for each showtime
+    const enhancedShowtimes = await Promise.all(showtimes.map(async (showtime) => {
+      try {
+        const [inventory] = await db.query(
+          'SELECT available_seats FROM ticket_inventory WHERE showtime_id = ?', 
+          [showtime.showtime_id]
+        )
+        
+        // Format the showtime with nested screen and theater objects
+        return {
+          ...showtime,
+          available_seats: inventory.length > 0 ? inventory[0].available_seats : null,
+          screen: {
+            screen_id: showtime.screen_id,
+            screen_name: showtime.screen_name,
+            screen_type: showtime.screen_type,
+            theater_id: showtime.theater_id,
+            theater_name: showtime.theater_name
+          },
+          theater: {
+            theater_id: showtime.theater_id,
+            theater_name: showtime.theater_name,
+            theater_type: showtime.theater_type,
+            cinema_id: showtime.cinema_id,
+            cinema_name: showtime.cinema_name
+          }
+        }
+      } catch (err) {
+        console.error(`Error getting inventory for showtime ${showtime.showtime_id}:`, err)
+        return showtime
+      }
+    }))
+    
+    res.json(enhancedShowtimes)
+  } catch (error) {
+    console.error('Error fetching showtimes:', error)
+    res.status(500).json({ 
+      message: 'Error fetching showtimes',
+      error: error.message
+    })
+  }
+})
+
 router.post('/', upload.single('poster'), async (req, res) => {
   try {
     const { title, description, duration, genre, rating, release_date } = req.body
